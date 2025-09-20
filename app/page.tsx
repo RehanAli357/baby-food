@@ -2,17 +2,47 @@
 import React, { useState } from "react";
 import data from "@/dataset/food.json";
 
-const foodArray = Array.isArray(data) ? data : Object.values(data);
+// Define interface for nutrients
+interface Nutrients {
+  calories_kcal: number;
+  fats_g: number;
+  sodium_g: number;
+  carbohydrates_g: number;
+  fiber_g: number;
+  sugar_g: number;
+  protein_g: number;
+  vitaminA_g: number;
+  calcium_g: number;
+  zinc_g: number;
+  potassium_g: number;
+  magnesium_g: number;
+  vitaminC_g: number;
+}
+
+// Define interface for food item
+export interface FoodItem {
+  id: number;
+  food_name: string;
+  nutrients: Nutrients;
+  quantity_recommendation: string;
+  age_group: string;
+  quality: number;
+  nutritional_value: string;
+  notes?: string; // optional field
+}
+
+// Make sure the imported data is cast correctly
+const foodArray: FoodItem[] = Array.isArray(data) ? data : Object.values(data) as FoodItem[];
 
 // Extract unique age groups for filter options
-const ageGroups = Array.from(new Set(foodArray.map((item: any) => item.age_group)));
+const ageGroups: string[] = Array.from(new Set(foodArray.map((item) => item.age_group)));
 
-const Home = () => {
+const Home: React.FC = () => {
   const [selectedAge, setSelectedAge] = useState<string>("All");
   const [search, setSearch] = useState<string>("");
 
   // Filter logic
-  const filteredFoods = foodArray.filter((item: any) => {
+  const filteredFoods: FoodItem[] = foodArray.filter((item) => {
     const matchesAge = selectedAge === "All" || item.age_group === selectedAge;
     const matchesSearch =
       item.food_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -62,7 +92,7 @@ const Home = () => {
             No foods match your filters.
           </div>
         ) : (
-          filteredFoods.map((item: any) => (
+          filteredFoods.map((item) => (
             <div
               key={item.id}
               className="bg-gray-800 rounded-xl shadow-md p-6 flex flex-col gap-3 border border-gray-700"
